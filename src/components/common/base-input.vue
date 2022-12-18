@@ -1,7 +1,10 @@
 <template>
     <label class="base-input">
         {{ label }}
-        <input :type="type" class="base-input__input" @input="setModel">
+        <select v-if="(type === 'select')" class="base-input__input" @change="setModel">
+            <option v-for="(option, key) in options" :key="key" :value="option">{{ option }}</option>
+        </select>
+        <input v-else :type="type" class="base-input__input" @input="setModel">
     </label>
 </template>
 
@@ -11,7 +14,11 @@ export default {
   props: {
     label: { type: String, default: 'Base Label' },
     type: { type: String, default: 'text' },
+    options: { type: Object },
     id: { type: String, default: '' }
+  },
+  mounted () {
+    if (this.type === 'select') this.inputModel = 'blue'
   },
   data () {
     return {
@@ -21,6 +28,7 @@ export default {
   methods: {
     setModel (e) {
       this.inputModel = e.target.value
+      console.log(e.target.value)
     }
   }
 }

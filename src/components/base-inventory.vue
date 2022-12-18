@@ -5,8 +5,8 @@
         <table class="inventory__table" @contextmenu.prevent="ShowContext" @click="HideContext">
             <tr v-for="(row, row_key) in rows" :key="row_key" class="inventory__row">
                 <th v-for="(column, column_key) in row" :key="column_key" class="inventory__item">
-                    <img v-if="column" src="@/assets/ItemImage.svg" alt="" class="inventory__item-image">
-                    <p class="inventory__item-count">{{ column_key }}</p>
+                    <img v-if="column.name" :src="`@/assets/${column.color}.svg`" alt="" class="inventory__item-image">
+                    <p class="inventory__item-count">{{ column.count }}</p>
                 </th>
             </tr>
         </table>
@@ -17,13 +17,11 @@
 import BaseBlock from './common/base-block.vue'
 import ContextMenu from './common/base-context-menu.vue'
 import BasePopup from './common/base-popup.vue'
-import StorageService from '@/client/storage'
 export default {
   name: 'BaseInventory',
   components: { BaseBlock, ContextMenu, BasePopup },
-  created () {
-    // this.inventory = StorageService.getItem('inventory') ? JSON.parse(StorageService.getItem('inventory')) : {}
-    console.log(StorageService.getItem('inventory'))
+  mounted () {
+    if (localStorage.inventory) this.inventory = JSON.parse(localStorage.inventory)
   },
   data () {
     return {
@@ -37,7 +35,8 @@ export default {
       },
       popupInputs: [
         { id: 'name', label: 'Name' },
-        { id: 'count', label: 'Count', type: 'number' }
+        { id: 'count', label: 'Count', type: 'number' },
+        { id: 'color', label: 'Color', type: 'select', options: { 0: 'blue', 1: 'green', 2: 'yellow' } }
       ]
     }
   },
@@ -53,12 +52,14 @@ export default {
     },
     AddItem (data) {
       this.inventory[`${data.name}`] = data
-      StorageService.setItem('inventory', JSON.stringify(this.inventory))
+      localStorage.setItem('inventory', JSON.stringify(this.inventory))
     },
     RemoveItem (key) {
       this.inventory[`${key}`].count -= 1
       if (this.inventory[`${key}`].count === 0) delete this.inventory[`${key}`]
-      StorageService.setItem('inventory', JSON.stringify(this.inventory))
+      localStorage.setItem('inventory', JSON.stringify(this.inventory))
+    },
+    RenderItems () {
     }
   }
 }

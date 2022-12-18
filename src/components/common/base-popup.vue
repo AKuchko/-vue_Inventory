@@ -6,8 +6,8 @@
                     v-for="input in inputs" :key="input.id"
                     :label="input.label"
                     :type="input.type"
+                    :options="input.options"
                     :ref="input.id"/>
-                <select></select>
                 <base-button type="submit">Submit</base-button>
             </form>
         </base-block>
